@@ -185,8 +185,9 @@ public class MTProto {
     }
 
     public void closeConnections() {
-    	Logger.d(this.TAG, "MTProto.closeConnections");
-        synchronized (this.contexts) {
+    	//Logger.d(this.TAG, "MTProto.closeConnections");
+        System.out.println("MTProto.closeConnections");
+    	synchronized (this.contexts) {
             for (TcpContext context : this.contexts) {
                 context.suspendConnection(true);
                 this.scheduller.onConnectionDies(context.getContextId());
@@ -815,7 +816,8 @@ public class MTProto {
 
         @Override
         public void onRawMessage(byte[] data, int offset, int len, TcpContext context) {
-        	Logger.d(MTProto.this.TAG, "MTProto.TcpListener.onRawMessage");
+        	//Logger.d(MTProto.this.TAG, "MTProto.TcpListener.onRawMessage");
+        	System.out.println("MTProto.TcpListener.onRawMessage");
         	if (MTProto.this.isClosed) {
                 return;
             }
@@ -898,8 +900,9 @@ public class MTProto {
 
         @Override
         public void onChannelBroken(TcpContext context) {
-        	Logger.d(MTProto.this.TAG, "MTProto.TcpListener.onChannelBroken");
-            if (MTProto.this.isClosed) {
+        	//Logger.d(MTProto.this.TAG, "MTProto.TcpListener.onChannelBroken");
+        	System.out.println("MTProto.TcpListener.onChannelBroken");
+        	if (MTProto.this.isClosed) {
                 return;
             }
             int contextId = context.getContextId();
