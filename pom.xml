@@ -6,7 +6,7 @@
     <packaging>jar</packaging>
     <groupId>org.telegram</groupId>
     <artifactId>telegramapi</artifactId>
-    <version>66.2</version>
+    <version>76.2</version>
 
     <name>Telegram Api</name>
     <url>https://github.com/rubenlagus/TelegramApi</url>
@@ -90,7 +90,7 @@
         <testOutputDirectory>${project.build.directory}/test-classes</testOutputDirectory>
         <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
         <plugins>
-            <plugin>
+            <!--plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
                 <version>1.5</version>
@@ -114,7 +114,7 @@
                     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
                 </configuration>
-            </plugin>
+            </plugin-->
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
                 <version>3.0.0</version>

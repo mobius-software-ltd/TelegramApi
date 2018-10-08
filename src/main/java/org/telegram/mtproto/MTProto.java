@@ -43,7 +43,8 @@ import static org.telegram.tl.StreamingUtils.*;
  * Time: 8:14
  */
 public class MTProto {
-    private static final AtomicInteger instanceIndex = new AtomicInteger(1000);
+	
+	private static final AtomicInteger instanceIndex = new AtomicInteger(1000);
 
     private static final int MESSAGES_CACHE = 3000;
     private static final int MESSAGES_CACHE_MIN = 20;
@@ -184,6 +185,7 @@ public class MTProto {
     }
 
     public void closeConnections() {
+    	Logger.d(this.TAG, "MTProto.closeConnections");
         synchronized (this.contexts) {
             for (TcpContext context : this.contexts) {
                 context.suspendConnection(true);
@@ -813,7 +815,8 @@ public class MTProto {
 
         @Override
         public void onRawMessage(byte[] data, int offset, int len, TcpContext context) {
-            if (MTProto.this.isClosed) {
+        	Logger.d(MTProto.this.TAG, "MTProto.TcpListener.onRawMessage");
+        	if (MTProto.this.isClosed) {
                 return;
             }
             try {
@@ -895,6 +898,7 @@ public class MTProto {
 
         @Override
         public void onChannelBroken(TcpContext context) {
+        	Logger.d(MTProto.this.TAG, "MTProto.TcpListener.onChannelBroken");
             if (MTProto.this.isClosed) {
                 return;
             }
