@@ -673,13 +673,14 @@ public class MTProto {
                     Logger.d(MTProto.this.TAG, "Scheduller Iteration");
                 }
 
-                int[] contextIds;
+                Integer[] contextIds;
                 synchronized (MTProto.this.contexts) {             	
-                	TcpContext[] currentContexts = MTProto.this.contexts.keySet().toArray(new TcpContext[0]);
-                    contextIds = new int[currentContexts.length];
-                    for (int i = 0; i < contextIds.length; i++) {
-                        contextIds[i] = currentContexts[i].getContextId();
-                    }
+                	//TcpContext[] currentContexts = MTProto.this.contexts.keySet().toArray(new TcpContext[0]);
+                    contextIds = MTProto.this.contexts.keySet().toArray(new Integer[MTProto.this.contexts.size()]);
+                    		/*new int[MTProto.this.contexts.size()];
+                    for (int i = 0; i < MTProto.this.contexts.size(); i++) {
+                        contextIds[i] = MTProto.this.contexts.get(i).getContextId();
+                    }*/
                 }
 
                 synchronized (MTProto.this.scheduller) {

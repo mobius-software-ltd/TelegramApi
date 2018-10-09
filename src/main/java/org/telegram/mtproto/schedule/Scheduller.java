@@ -132,7 +132,7 @@ public class Scheduller {
         return postMessageDelayed(object, isApi, timeout, 0, -1, highPrioroty);
     }
 
-    public synchronized void prepareScheduller(PrepareSchedule prepareSchedule, int[] connectionIds) {
+    public synchronized void prepareScheduller(PrepareSchedule prepareSchedule, Integer[] connectionIds) {
         long time = getCurrentTime();
 
         // Clear packages for unknown channels
@@ -206,7 +206,7 @@ public class Scheduller {
             prepareSchedule.setAllowedContexts(connectionIds);
         } else {
             Integer[] allowedBoxed = supportedConnections.toArray(new Integer[0]);
-            int[] allowed = new int[allowedBoxed.length];
+            Integer[] allowed = new Integer[allowedBoxed.length];
             for (int i = 0; i < allowed.length; i++) {
                 allowed[i] = allowedBoxed[i];
             }

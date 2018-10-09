@@ -5,7 +5,7 @@ package org.telegram.mtproto.schedule;
  */
 public class PrepareSchedule {
     private long delay;
-    private int[] allowedContexts;
+    private Integer[] allowedContexts;
     private boolean doWait;
 
     public boolean isDoWait() {
@@ -24,11 +24,11 @@ public class PrepareSchedule {
         this.delay = delay;
     }
 
-    public int[] getAllowedContexts() {
+    public Integer[] getAllowedContexts() {
         return this.allowedContexts;
     }
 
-    public void setAllowedContexts(int[] allowedContexts) {
+    public void setAllowedContexts(Integer[] allowedContexts) {
         this.allowedContexts = allowedContexts;
     }
 }
