@@ -791,7 +791,8 @@ public class MTProto {
                 synchronized (MTProto.this.contexts) {
                     if (MTProto.this.contexts.size() >= MTProto.this.desiredConnectionCount) {
                         try {
-                            MTProto.this.contexts.wait();
+                            //MTProto.this.contexts.wait();
+                        	MTProto.this.semaphore.acquire();
                         } catch (InterruptedException e) {
                             return;
                         }                   	
