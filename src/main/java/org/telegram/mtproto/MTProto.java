@@ -702,13 +702,13 @@ public class MTProto {
 
                 TcpContext context = null;
                 synchronized (MTProto.this.contexts) {
-                    
+                    Iterator it = MTProto.this.contexts.keySet().iterator();
                     outer:               
-                	for (int i = 0; i < MTProto.this.contexts.size(); i++) {
-                        int index = (i + MTProto.this.roundRobin + 1) % MTProto.this.contexts.size();
+                	while(it.hasNext()) {
+                        //int index = (i + MTProto.this.roundRobin + 1) % MTProto.this.contexts.size();
                         for (int allowed : prepareSchedule.getAllowedContexts()) {
-                            if (MTProto.this.contexts.get(index).getContextId() == allowed) {
-                                context = MTProto.this.contexts.get(index);
+                            if ((Integer) it.next() == allowed) {
+                                context = MTProto.this.contexts.get((Integer)it.next());
                                 break outer;
                             }
                         }
