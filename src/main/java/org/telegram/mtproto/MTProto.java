@@ -200,13 +200,9 @@ public class MTProto {
             	context.suspendConnection(true);
                 this.scheduller.onConnectionDies(context.getContextId());
             }
-    		/*for (TcpContext context : this.contexts) {
-                context.suspendConnection(true);
-                this.scheduller.onConnectionDies(context.getContextId());
-            }*/
             this.contexts.clear();
-            this.contexts.notifyAll();
-            //MTProto.this.semaphore.release();
+            //this.contexts.notifyAll();
+            MTProto.this.semaphore.release();
         }
     }
 
@@ -500,18 +496,13 @@ public class MTProto {
         if (time - this.lastPingTime > PING_INTERVAL_REQUEST) {
             this.lastPingTime = time;
             synchronized (this.contexts) {
-            	Iterator it = this.contexts.keySet().iterator();
-                while(it.hasNext()){
-                	Integer contextId = (Integer) it.next();         
+            	//Iterator it = this.contexts.keySet().iterator();
+                for(Integer key : this.contexts.keySet()){
+                	//Integer contextId = (Integer) it.next();         
                 	this.scheduller.postMessageDelayed(
                             new MTPingDelayDisconnect(Entropy.getInstance().generateRandomId(), PING_INTERVAL),
-                            false, PING_INTERVAL_REQUEST, 0, contextId, false);
+                            false, PING_INTERVAL_REQUEST, 0, key, false);
                 }
-                /*for (TcpContext context : this.contexts) {
-                    this.scheduller.postMessageDelayed(
-                            new MTPingDelayDisconnect(Entropy.getInstance().generateRandomId(), PING_INTERVAL),
-                            false, PING_INTERVAL_REQUEST, 0, context.getContextId(), false);
-                }*/
             }
         }
     }
@@ -675,12 +666,7 @@ public class MTProto {
 
                 Integer[] contextIds;
                 synchronized (MTProto.this.contexts) {             	
-                	//TcpContext[] currentContexts = MTProto.this.contexts.keySet().toArray(new TcpContext[0]);
                     contextIds = MTProto.this.contexts.keySet().toArray(new Integer[MTProto.this.contexts.size()]);
-                    		/*new int[MTProto.this.contexts.size()];
-                    for (int i = 0; i < MTProto.this.contexts.size(); i++) {
-                        contextIds[i] = MTProto.this.contexts.get(i).getContextId();
-                    }*/
                 }
 
                 synchronized (MTProto.this.scheduller) {
@@ -702,36 +688,19 @@ public class MTProto {
 
                 TcpContext context = null;
                 synchronized (MTProto.this.contexts) {
-                    Iterator it = MTProto.this.contexts.keySet().iterator();
                     outer:               
-                	while(it.hasNext()) {
-                        //int index = (i + MTProto.this.roundRobin + 1) % MTProto.this.contexts.size();
+                	for(Integer key : MTProto.this.contexts.keySet()) {                  
                         for (int allowed : prepareSchedule.getAllowedContexts()) {
-                        	Integer next = (Integer) it.next();
-                            if (next == allowed) {
-                                context = MTProto.this.contexts.get(next);
+                            if (key == allowed) {
+                                context = MTProto.this.contexts.get(key);
                                 break outer;
                             }
                         }
-                    }	
-                    /*
-                    for (int i = 0; i < currentContexts.length; i++) {
-                        int index = (i + MTProto.this.roundRobin + 1) % currentContexts.length;
-                        for (int allowed : prepareSchedule.getAllowedContexts()) {
-                            if (currentContexts[index].getContextId() == allowed) {
-                                context = currentContexts[index];
-                                break outer;
-                            }
-                        }
-                    }*/
+                    }	                 
                 	
                 	if (MTProto.this.contexts.size() != 0) {
                         MTProto.this.roundRobin = (MTProto.this.roundRobin + 1) % MTProto.this.contexts.size();
-                	}
-                	/*
-                    if (currentContexts.length != 0) {
-                        MTProto.this.roundRobin = (MTProto.this.roundRobin + 1) % currentContexts.length;
-                    }*/
+                	}          
                 }
 
                 if (context == null) {
@@ -825,15 +794,7 @@ public class MTProto {
                             MTProto.this.contexts.wait();
                         } catch (InterruptedException e) {
                             return;
-                        }
-                    	/*try
-                		{
-                    		MTProto.this.semaphore.acquire();
-                		}
-                		catch(InterruptedException ex)
-                		{
-                			 return;
-                		}*/
+                        }                   	
                     }
                 }
                 //My code add
@@ -864,7 +825,6 @@ public class MTProto {
 
         @Override
         public void onRawMessage(byte[] data, int offset, int len, TcpContext context) {
-        	//System.out.println("MTProto.TcpListener.onRawMessage");
         	if (MTProto.this.isClosed) {
                 return;
             }
@@ -927,8 +887,8 @@ public class MTProto {
                         MTProto.this.connectionRate.onConnectionFailure(MTProto.this.contextConnectionId.get(context.getContextId()));
                     }
                     MTProto.this.contexts.remove(context.getContextId());
-                    MTProto.this.contexts.notifyAll();
-                    //MTProto.this.semaphore.release();
+                    //MTProto.this.contexts.notifyAll();
+                    MTProto.this.semaphore.release();
                     MTProto.this.scheduller.onConnectionDies(context.getContextId());
                 }
             }
@@ -963,9 +923,9 @@ public class MTProto {
                         MTProto.this.connectionRate.onConnectionFailure(MTProto.this.contextConnectionId.get(contextId));
                     }
                 }
-                MTProto.this.contexts.notifyAll();
-                //context.suspendConnection(true);
-                //MTProto.this.semaphore.release();
+                //MTProto.this.contexts.notifyAll();
+                context.suspendConnection(true);
+                MTProto.this.semaphore.release();
             }
             MTProto.this.scheduller.onConnectionDies(context.getContextId());
             requestSchedule();
