@@ -802,7 +802,7 @@ public class MTProto {
                 //for(TcpContext context : MTProto.this.contexts)
                 	//context.suspendConnection(true);
                 
-                System.out.println("MTProto.ConnectionFixerThread.run new TcpContext");
+                System.out.println("MTProto.ConnectionFixerThread.run ________________  new TcpContext");
                 ConnectionType type = MTProto.this.connectionRate.tryConnection();
                 TcpContext context = new TcpContext(MTProto.this, type.getHost(), type.getPort(), MTProto.this.tcpListener);
                 context.connect();
@@ -812,7 +812,6 @@ public class MTProto {
                 MTProto.this.scheduller.postMessageDelayed(new MTPing(Entropy.getInstance().generateRandomId()), false, PING_TIMEOUT, 0, context.getContextId(), false);
                 synchronized (MTProto.this.contexts) {
                 	MTProto.this.contexts.put(context.getContextId(), context);
-                	//MTProto.this.contexts.add(context);
                     MTProto.this.contextConnectionId.put(context.getContextId(), type.getId());
                 }
                 synchronized (MTProto.this.scheduller) {
@@ -909,7 +908,7 @@ public class MTProto {
 
         @Override
         public void onChannelBroken(TcpContext context) {
-        	System.out.println("MTProto.TcpListener.onChannelBroken");
+        	System.out.println("MTProto.TcpListener.onChannelBroken IN");
         	if (MTProto.this.isClosed) {
                 return;
             }
@@ -925,7 +924,8 @@ public class MTProto {
                     }
                 }
                 //MTProto.this.contexts.notifyAll();
-                context.suspendConnection(true);
+                //context.suspendConnection(true);
+                System.out.println("MTProto.TcpListener.onChannelBroken Before semaphore.release");
                 MTProto.this.semaphore.release();
             }
             MTProto.this.scheduller.onConnectionDies(context.getContextId());
