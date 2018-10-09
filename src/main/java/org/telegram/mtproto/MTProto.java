@@ -707,8 +707,9 @@ public class MTProto {
                 	while(it.hasNext()) {
                         //int index = (i + MTProto.this.roundRobin + 1) % MTProto.this.contexts.size();
                         for (int allowed : prepareSchedule.getAllowedContexts()) {
-                            if ((Integer) it.next() == allowed) {
-                                context = MTProto.this.contexts.get((Integer)it.next());
+                        	Integer next = (Integer) it.next();
+                            if (next == allowed) {
+                                context = MTProto.this.contexts.get(next);
                                 break outer;
                             }
                         }
