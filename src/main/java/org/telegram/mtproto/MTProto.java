@@ -793,7 +793,7 @@ public class MTProto {
                         }
                     }
                 }
-
+                System.out.println("MTProto.ConnectionFixerThread.run new TcpContext");
                 ConnectionType type = MTProto.this.connectionRate.tryConnection();
                 TcpContext context = new TcpContext(MTProto.this, type.getHost(), type.getPort(), MTProto.this.tcpListener);
                 context.connect();
