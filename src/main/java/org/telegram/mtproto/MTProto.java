@@ -813,8 +813,8 @@ public class MTProto {
                     return;
                 }
                 MTProto.this.scheduller.postMessageDelayed(new MTPing(Entropy.getInstance().generateRandomId()), false, PING_TIMEOUT, 0, context.getContextId(), false);             
-                	MTProto.this.contexts.put(context.getContextId(), context);
-                    MTProto.this.contextConnectionId.put(context.getContextId(), type.getId());
+                MTProto.this.contexts.put(context.getContextId(), context);
+                MTProto.this.contextConnectionId.put(context.getContextId(), type.getId());
                 
                 synchronized (MTProto.this.scheduller) {
                     MTProto.this.scheduller.notifyAll();
