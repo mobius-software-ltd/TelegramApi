@@ -138,10 +138,10 @@ public class MTProto {
         this.schedullerThread.start();
         this.responseProcessor = new ResponseProcessor();
         this.responseProcessor.start();
+        this.semaphore = new Semaphore(0);
+        this.uuid = UUID.randomUUID();
         this.connectionFixerThread = new ConnectionFixerThread();
         this.connectionFixerThread.start();
-        this.semaphore = new Semaphore(1);
-        this.uuid = UUID.randomUUID();
     }
 
     public static int readInt(byte[] src) {
@@ -195,7 +195,7 @@ public class MTProto {
     }
 
     public void closeConnections() {
-    	System.out.println("MTProto.closeConnections");
+    	
     	synchronized (this.contexts) {
     		Iterator it = this.contexts.entrySet().iterator();
             while(it.hasNext()){
@@ -205,6 +205,7 @@ public class MTProto {
                 this.scheduller.onConnectionDies(context.getContextId());
             }
             this.contexts.clear();
+            //System.out.println("MTProto.closeConnections semaphore.release()");
             MTProto.this.semaphore.release();
         }
     }
@@ -794,7 +795,8 @@ public class MTProto {
             while (!MTProto.this.isClosed) {
                 if (Logger.LOG_THREADS) {
                     Logger.d(MTProto.this.TAG, "Connection Fixer Iteration");
-                }                
+                }   
+                //System.out.println("Before IF size= " + MTProto.this.contexts.size() + " desiredConnectionCount= " + MTProto.this.desiredConnectionCount); 
                     if (MTProto.this.contexts.size() >= MTProto.this.desiredConnectionCount) {
                         try {
                         	//System.out.println("ACQUIRE proto.uuid= " + MTProto.this.uuid + " fixer uuid= " + this.uuid);                         
@@ -806,7 +808,7 @@ public class MTProto {
                 
                 //System.out.println("NEW proto.uuid= " + MTProto.this.uuid + " fixer uuid= " + this.uuid);
                 ConnectionType type = MTProto.this.connectionRate.tryConnection();
-                //System.out.println("MTProto.ConnectionFixerThread.run NEW TcpContext + connect");
+                //System.out.println("MTProto.ConnectionFixerThread.run NEW TcpContext + connect" + " size= " + MTProto.this.contexts.size() + " desiredConnectionCount= " + MTProto.this.desiredConnectionCount);
                 TcpContext context = new TcpContext(MTProto.this, type.getHost(), type.getPort(), MTProto.this.tcpListener);
                 context.connect();
                 if (MTProto.this.isClosed) {
@@ -815,6 +817,7 @@ public class MTProto {
                 MTProto.this.scheduller.postMessageDelayed(new MTPing(Entropy.getInstance().generateRandomId()), false, PING_TIMEOUT, 0, context.getContextId(), false);             
                 MTProto.this.contexts.put(context.getContextId(), context);
                 MTProto.this.contextConnectionId.put(context.getContextId(), type.getId());
+                //System.out.println("AFTER size= " + MTProto.this.contexts.size() + " desiredConnectionCount= " + MTProto.this.desiredConnectionCount); 
                 
                 synchronized (MTProto.this.scheduller) {
                     MTProto.this.scheduller.notifyAll();
@@ -888,8 +891,9 @@ public class MTProto {
                         MTProto.this.exponentalBackoff.onFailureNoWait();
                         MTProto.this.connectionRate.onConnectionFailure(MTProto.this.contextConnectionId.get(context.getContextId()));
                     }
-                    //System.out.println("MTProto.onRawMessage contexts.remove TcpContext");
+                    
                     MTProto.this.contexts.remove(context.getContextId());
+                    //System.out.println("MTProto.onRawMessage semaphore.release()");
                     MTProto.this.semaphore.release();
                     MTProto.this.scheduller.onConnectionDies(context.getContextId());
                 }
